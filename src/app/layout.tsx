@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "../styles/globals.css";
+import { Domine, Gravitas_One, Limelight } from "next/font/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+export const domine = Domine({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-domine",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+export const gravitas = Gravitas_One({
   subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-gravitas",
+});
+
+export const limelight = Limelight({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-limelight",
 });
 
 export const metadata: Metadata = {
@@ -24,8 +32,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+        />
+
+        <title>App User</title>
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${domine.variable} ${gravitas.variable} ${limelight.variable}`}
       >
         {children}
       </body>

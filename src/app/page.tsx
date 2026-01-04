@@ -1,8 +1,9 @@
 export default function Home() {
   return (
     <div>
-      <h1>Dashboard</h1>
-
+      <div>
+        <a href="/dashboard">Dashboard Page</a>
+      </div>
       <div>
         <a href="/login">Login Page</a>
       </div>

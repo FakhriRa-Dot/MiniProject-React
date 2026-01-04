@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
 import { Domine, Gravitas_One, Limelight } from "next/font/google";
+import { ToastContainer } from "react-toastify";
 
 export const domine = Domine({
   subsets: ["latin"],
@@ -43,6 +44,14 @@ export default function RootLayout({
       <body
         className={`${domine.variable} ${gravitas.variable} ${limelight.variable}`}
       >
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
         {children}
       </body>
     </html>

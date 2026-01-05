@@ -18,6 +18,7 @@ const LoginPage = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const submitLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +38,6 @@ const LoginPage = () => {
       });
 
       const data = await response.json();
-      console.log("LOGIN RESPONSE:", data);
 
       if (!response.ok) {
         toast.error(data.error || "Login gagal");
@@ -45,12 +45,9 @@ const LoginPage = () => {
       }
 
       localStorage.setItem("loginToken", data.token);
-
       toast.success("Berhasil login 🎉");
 
-      setTimeout(() => {
-        router.push("/dashboard");
-      }, 600);
+      router.push("/dashboard");
     } catch (error) {
       toast.error("Terjadi kesalahan");
     } finally {
@@ -59,31 +56,38 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="flex w-full max-w-4xl rounded-2xl shadow-xl overflow-hidden bg-white">
-        <div className="hidden md:flex md:w-1/2 bg-linear-to-b from-sky-300 via-blue-500 to-blue-900 p-8">
-          <div className="flex items-start gap-3 text-white font-bold text-xl">
-            <div className="w-8 h-8 bg-white/80 rounded-md" />
-            UserMgt
+    <div className="min-h-screen flex items-center justify-center bg-sky-100 px-4">
+      <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
+        <div className="hidden md:flex md:w-1/2 bg-linear-to-b from-sky-400 via-blue-500 to-blue-700 p-10 text-white">
+          <div>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-9 h-9 bg-white/80 rounded-md" />
+              <span className="text-2xl font-bold">UserMgt</span>
+            </div>
+
+            <h2 className="text-4xl font-bold mb-4">Welcome Back 👋</h2>
+            <p className="opacity-90">
+              Login to manage users and view your dashboard.
+            </p>
           </div>
         </div>
 
         <div className="w-full md:w-1/2 p-8 md:p-12">
-          <h1 className="text-4xl font-extrabold mb-2">Hello!</h1>
+          <div className="md:hidden mb-8 text-center">
+            <h1 className="text-2xl font-bold text-blue-600">UserMgt</h1>
+          </div>
+
+          <h1 className="text-3xl md:text-4xl font-extrabold mb-2">Sign In</h1>
           <p className="text-gray-500 mb-8">
-            Enter your detail below to sign in:
+            Enter your detail below to sign in
           </p>
 
           <form className="space-y-6" onSubmit={submitLogin}>
             <div>
-              <label className="block text-sm font-medium mb-1" htmlFor="email">
-                Email
-              </label>
+              <label className="block text-sm font-medium mb-1">Email</label>
               <input
                 type="email"
-                id="email"
-                name="email"
-                placeholder="youremail@req.res.in"
+                placeholder="eve.holt@reqres.in"
                 required
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
                 onChange={(e) =>
@@ -91,60 +95,53 @@ const LoginPage = () => {
                 }
               />
             </div>
-
             <div>
-              <label
-                className="block text-sm font-medium mb-1"
-                htmlFor="password"
-              >
-                Password
-              </label>
+              <label className="block text-sm font-medium mb-1">Password</label>
+
               <div className="relative">
                 <input
-                  type="password"
-                  id="password"
-                  name="password"
-                  placeholder="yourpassword"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="cityslicka"
                   required
                   className="w-full rounded-lg border border-gray-300 px-4 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-400"
                   onChange={(e) =>
                     setLoginData({ ...loginData, password: e.target.value })
                   }
                 />
-                <span className="absolute inset-y-0 right-3 flex items-center text-gray-500 cursor-pointer">
-                  {" "}
-                  <i className="fa fa-eye"></i>{" "}
-                </span>
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-3 text-sm text-gray-500"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
               </div>
-              <div className="text-right mt-1">
-                {" "}
+
+              <div className="text-right mt-2">
                 <a href="#" className="text-sm text-blue-500 hover:underline">
-                  {" "}
-                  Forgot Your Password?{" "}
-                </a>{" "}
+                  Forgot your password?
+                </a>
               </div>
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 rounded-lg shadow-md transition"
+              className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white font-semibold py-2 rounded-lg transition"
             >
-              {loading ? "Signing in..." : "SIGN IN"}
+              {loading ? "Signing in..." : "Sign In"}
             </button>
           </form>
 
-          <p className="text-center text-sm text-gray-500 mt-6">
-            {" "}
+          <p className="text-center text-sm text-gray-500 mt-8">
             Don&apos;t have an account?{" "}
-            <a
-              href="#"
-              className="text-blue-500 hover:underline"
+            <button
               onClick={() => router.push("/register")}
+              className="text-blue-500 hover:underline font-medium"
             >
-              {" "}
-              Sign Up Here{" "}
-            </a>{" "}
+              Sign Up Here
+            </button>
           </p>
         </div>
       </div>

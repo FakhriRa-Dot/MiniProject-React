@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { User } from "@/types/user";
 
-const UserDetailPage = () => {
+export default function UserDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
+
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -20,8 +21,10 @@ const UserDetailPage = () => {
           },
         });
 
-        const data = await res.json();
-        setUser(data.data);
+        const json = await res.json();
+        setUser(json.data);
+      } catch (err) {
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -31,75 +34,86 @@ const UserDetailPage = () => {
   }, [id]);
 
   if (loading) {
-    return <p className="p-8">Loading user detail...</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading user detail...</p>
+      </div>
+    );
   }
 
   if (!user) {
-    return <p className="p-8">User not found</p>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-red-500">User not found</p>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-sky-200 flex items-center justify-center p-6">
-      <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden">
-        {/* HEADER */}
-        <div className="bg-gradient-to-r from-blue-500 to-sky-400 p-8 flex items-center gap-6">
-          <img
-            src={user.avatar}
-            alt={user.first_name}
-            className="w-28 h-28 rounded-full border-4 border-white bg-white"
-          />
+    <div className="min-h-screen bg-gray-100 flex">
+      <main className="flex-1 p-4 sm:p-8 flex justify-center items-start">
+        <div className="w-full max-w-4xl bg-white rounded-3xl shadow-xl overflow-hidden">
+          <div className="bg-linear-to-r from-blue-500 to-sky-400 p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6">
+            <img
+              src={user.avatar}
+              alt={user.first_name}
+              className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-white bg-white"
+            />
 
-          <div className="text-white">
-            <h1 className="text-3xl font-bold">
-              {user.first_name} {user.last_name}
-            </h1>
-            <p className="opacity-90">{user.email}</p>
+            <div className="text-white text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold">
+                {user.first_name} {user.last_name}
+              </h1>
+              <p className="opacity-90 break-all">{user.email}</p>
 
-            <span className="inline-block mt-3 px-3 py-1 text-xs font-semibold bg-white/20 rounded-full">
-              Active Member
-            </span>
+              <span className="inline-block mt-3 px-3 py-1 text-xs font-semibold bg-white/20 rounded-full">
+                Active Member
+              </span>
+            </div>
+          </div>
+
+          <div className="p-6 sm:p-8">
+            <h2 className="text-lg sm:text-xl font-semibold mb-6">
+              User Information
+            </h2>
+
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-6 text-sm">
+              <Info label="User ID" value={user.id} />
+              <Info label="Role" value="Member" />
+              <Info label="Status" value="Active" green />
+              <Info label="Email" value={user.email} />
+            </div>
+
+            <div className="mt-10 flex justify-end">
+              <button
+                onClick={() => router.back()}
+                className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold transition"
+              >
+                Back to Dashboard
+              </button>
+            </div>
           </div>
         </div>
-
-        {/* CONTENT */}
-        <div className="p-8">
-          <h2 className="text-xl font-semibold mb-6">User Information</h2>
-
-          <div className="grid sm:grid-cols-2 gap-6 text-sm">
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-gray-500 mb-1">User ID</p>
-              <p className="font-semibold">{user.id}</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-gray-500 mb-1">Role</p>
-              <p className="font-semibold">Member</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-gray-500 mb-1">Status</p>
-              <p className="font-semibold text-green-600">Active</p>
-            </div>
-
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-gray-500 mb-1">Email</p>
-              <p className="font-semibold break-all">{user.email}</p>
-            </div>
-          </div>
-
-          {/* ACTION */}
-          <div className="mt-10 flex justify-end">
-            <button
-              onClick={() => router.back()}
-              className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold transition"
-            >
-              Back to Dashboard
-            </button>
-          </div>
-        </div>
-      </div>
+      </main>
     </div>
   );
-};
+}
 
-export default UserDetailPage;
+function Info({
+  label,
+  value,
+  green,
+}: {
+  label: string;
+  value: React.ReactNode;
+  green?: boolean;
+}) {
+  return (
+    <div className="bg-gray-50 rounded-xl p-4">
+      <p className="text-gray-500 mb-1">{label}</p>
+      <p className={`font-semibold ${green ? "text-green-600" : ""}`}>
+        {value}
+      </p>
+    </div>
+  );
+}

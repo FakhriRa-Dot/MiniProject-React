@@ -1,10 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
-const RegisterPage = () => {
+export default function RegisterPage() {
   const router = useRouter();
 
   const headers = {
@@ -12,165 +12,145 @@ const RegisterPage = () => {
     "x-api-key": "reqres_78a869f591654962800d3a55978d5b34",
   };
 
-  const [registerData, setRegisterData] = useState<any>({
+  const [form, setForm] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
 
   const [loading, setLoading] = useState(false);
 
   const submitRegister = async (e: React.FormEvent) => {
-    const payload = {
-      email: registerData.email,
-      password: registerData.password,
-    };
-
     e.preventDefault();
-    console.log("Submit Klik");
 
-    if (!registerData.email || !registerData.password) {
-      toast.error("Email atau Password Salah");
+    if (!form.email || !form.password || !form.confirmPassword) {
+      toast.error("Semua field wajib diisi");
+      return;
+    }
+
+    if (form.password !== form.confirmPassword) {
+      toast.error("Password tidak sama");
       return;
     }
 
     setLoading(true);
-    setTimeout(() => {
-      router.push("/login");
-    }, 800);
 
     try {
       const response = await fetch("https://reqres.in/api/register", {
         method: "POST",
-        headers: headers,
-        body: JSON.stringify(payload),
+        headers,
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
       });
 
       const data = await response.json();
 
-      if (response.ok) {
-        toast.success("Register berhasil");
-      } else {
+      if (!response.ok) {
         toast.error(data.error || "Register gagal");
+        return;
       }
-    } catch (error: any) {
-      toast.error(error.message);
+
+      toast.success("Register berhasil 🎉");
+
+      setTimeout(() => {
+        router.push("/login");
+      }, 700);
+    } catch (error) {
+      toast.error("Terjadi kesalahan");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-sky-200">
-      <header className="flex items-center justify-between px-10 py-4 bg-white">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-md bg-blue-300"></div>
-          <span className="text-xl">UserMgt</span>
-        </div>
+    <div className="min-h-screen bg-sky-200 flex flex-col">
+      <header className="bg-white shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-10 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-md bg-blue-400" />
+            <span className="text-xl font-bold">UserMgt</span>
+          </div>
 
-        <p>
-          Already have an account?{" "}
-          <a
-            href="#"
-            className="text-blue-500 text-decoration-none hover:underline"
-            onClick={() => router.push("/login")}
-          >
-            Sign In Here
-          </a>
-        </p>
+          <p className="text-sm">
+            Already have an account?{" "}
+            <button
+              onClick={() => router.push("/login")}
+              className="text-blue-500 hover:underline font-medium"
+            >
+              Sign In
+            </button>
+          </p>
+        </div>
       </header>
 
-      <div className="flex justify-center items-center py-16">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-10">
-          <h1 className="text-3xl mb-2">Create an Account</h1>
+      <main className="flex flex-1 items-center justify-center px-4 py-10">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6 sm:p-10">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
+            Create an Account
+          </h1>
           <p className="text-gray-500 mb-8">
-            Get started with your account bussines today:
+            Get started with your account today
           </p>
 
-          <form className="space-y-5" onSubmit={submitRegister}>
+          <form onSubmit={submitRegister} className="space-y-5">
             <div>
-              <label className="block font-body mb-1" htmlFor="email">
-                Email:
-              </label>
+              <label className="block text-sm font-medium mb-1">Email</label>
               <input
-                onChange={(e: any) => {
-                  setRegisterData({
-                    ...registerData,
-                    email: e.target.value,
-                  });
-                }}
                 type="email"
-                id="email"
-                placeholder="youremail@gmail.com"
-                className="w-full border border-gray-300 rounded-lg px-4 py-2
-                           placeholder:text-gray-400 focus:outline-none
-                           focus:ring-2 focus:ring-blue-400"
-                required
+                placeholder="youremail@req.res.in"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-400"
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
               />
             </div>
 
             <div>
-              <label className="block font-body mb-1" htmlFor="password">
-                Password:
-              </label>
-              <div className="relative">
-                <input
-                  onChange={(e: any) => {
-                    setRegisterData({
-                      ...registerData,
-                      password: e.target.value,
-                    });
-                  }}
-                  type="password"
-                  id="password"
-                  placeholder="at least 8 characters"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10
-                             placeholder:text-gray-400 focus:outline-none
-                             focus:ring-2 focus:ring-blue-400"
-                  required
-                />
-                <span className="absolute inset-y-0 right-3 flex items-center text-gray-500">
-                  <i className="fa fa-eye"></i>
-                </span>
-              </div>
+              <label className="block text-sm font-medium mb-1">Password</label>
+              <input
+                type="password"
+                placeholder="Minimum 8 characters"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-400"
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+              />
             </div>
 
             <div>
-              <label className="block font-body mb-1">Confirm Password:</label>
-              <div className="relative">
-                <input
-                  type="password"
-                  placeholder="Re-enter your password"
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 pr-10
-                             placeholder:text-gray-400 focus:outline-none
-                             focus:ring-2 focus:ring-blue-400"
-                />
-                <span className="absolute inset-y-0 right-3 flex items-center text-gray-500">
-                  <i className="fa fa-eye"></i>
-                </span>
-              </div>
+              <label className="block text-sm font-medium mb-1">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                placeholder="Re-enter password"
+                className="w-full rounded-lg border border-gray-300 px-4 py-2
+                           focus:outline-none focus:ring-2 focus:ring-blue-400"
+                onChange={(e) =>
+                  setForm({ ...form, confirmPassword: e.target.value })
+                }
+              />
             </div>
 
-            <div className="flex items-start gap-2 text-sm text-gray-600 font-body">
-              <i className="fa fa-check-circle text-green-500 mt-1"></i>
+            <div className="text-xs text-gray-600 flex gap-2">
+              <span className="text-green-500 font-bold">✔</span>
               <p>
-                Password must contain at least 8 characters, including one
-                uppercase letter and one number
+                Password minimal 8 karakter (Reqres hanya valid contoh tertentu)
               </p>
             </div>
 
             <button
               type="submit"
+              disabled={loading}
               className="w-full bg-blue-500 hover:bg-blue-600
-                         active:scale-[0.98] transition
-                         text-white font-accent py-2 rounded-lg shadow-md"
+                         text-white font-semibold py-2 rounded-lg
+                         transition active:scale-[0.98]"
             >
               {loading ? "Registering..." : "Create Account"}
             </button>
           </form>
         </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default RegisterPage;
+}

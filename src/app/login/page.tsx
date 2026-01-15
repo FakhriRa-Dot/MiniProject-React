@@ -65,7 +65,7 @@ const LoginPage = () => {
               <span className="text-2xl font-bold">UserMgt</span>
             </div>
 
-            <h2 className="text-4xl font-bold mb-4">Welcome Back 👋</h2>
+            <h2 className="text-4xl font-bold mb-4">Hello</h2>
             <p className="opacity-90">
               Login to manage users and view your dashboard.
             </p>

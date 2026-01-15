@@ -89,7 +89,7 @@ export default function UserDetailPage() {
                 onClick={() => router.back()}
                 className="px-6 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white font-semibold transition"
               >
-                Back to Dashboard
+                Back
               </button>
             </div>
           </div>
